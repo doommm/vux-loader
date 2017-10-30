@@ -15,11 +15,15 @@ module.exports = function (source) {
     source = parser(source, function (opts) {
       let str = ''
       opts.components.forEach(function (component) {
-        let file = `vux/${maps[component.originalName]}`
-        if (vuxConfig.options.vuxDev) {
-          file = file.replace('vux/src/', './')
-        }
-        str += `import ${component.newName} from '${file}'\n`
+        let fn = maps[component.originalName];
+        let newName = component.newName;
+        if(fn !== undefined && newName.trim().length > 0){
+          let file = `vux/${fn}`
+          if (vuxConfig.options.vuxDev) {
+            file = file.replace('vux/src/', './')
+          }
+          str += `import ${component.newName} from '${file}'\n`
+          }
       })
       return str
     }, 'vux')

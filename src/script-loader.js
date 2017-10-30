@@ -44,21 +44,25 @@ module.exports = function (source) {
     source = parser(source, function (opts) {
       let str = ''
       opts.components.forEach(function (component) {
-        let file = `vux/${maps[component.originalName]}`
-        if (config.options.vuxDev) {
-          if (/App\.vue/.test(_this.resourcePath)) {
-            file = file.replace(/vux\/src/g, '.')
-          } else {
-            let relative = '..'
-            // component file import other functions
-            if (isVuxComponent && !/components/.test(file)) {
-              relative = '../..'
+        let fn = maps[component.originalName];
+        let newName = component.newName;
+        if(fn !== undefined && newName.trim().length > 0){
+          let file = `vux/${fn}`
+          if (config.options.vuxDev) {
+            if (/App\.vue/.test(_this.resourcePath)) {
+              file = file.replace(/vux\/src/g, '.')
+            } else {
+              let relative = '..'
+              // component file import other functions
+              if (isVuxComponent && !/components/.test(file)) {
+                relative = '../..'
+              }
+  
+              file = file.replace(/vux\/src/g, relative)
             }
-
-            file = file.replace(/vux\/src/g, relative)
           }
-        }
-        str += `import ${component.newName} from '${file}'\n`
+          str += `import ${component.newName} from '${file}'\n`
+          }        
       })
       return str
     }, 'vux')
